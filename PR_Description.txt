@@ -1,0 +1,31 @@
+Invoice Dashboard Feature - Pull Request Description
+
+This feature includes:
+
+1. Customer and Date Range Filters:
+   - Allows filtering invoices by customer and invoice date range.
+
+2. KPI Tiles:
+   - Total Invoiced
+   - Total Received
+   - Total Outstanding
+   - % Overdue
+
+3. Invoice Table:
+   - Displays invoices with columns: Invoice ID, Customer, Invoice Date, Due Date, Amount
+   - Rows overdue are highlighted
+   - "Record Payment" action for each invoice
+
+4. Chart:
+   - Top 5 customers by outstanding amount
+   - Uses Chart.js for visualization
+
+5. Backend:
+   - Flask application connected to MySQL
+   - Handles fetching invoices, calculating KPIs, and recording payments
+
+6. Frontend:
+   - HTML/CSS using Bootstrap
+   - Responsive and user-friendly layout
+
+All code has been tested locally and is ready to merge into the main branch.
