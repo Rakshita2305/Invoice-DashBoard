@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container mt-4">
+
+  <!-- Filters -->
+  <form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+      <select name="customer" class="form-select">
+        <option value="">All Customers</option>
+        {% for customer in customers %}
+          <option value="{{ customer.customer_id }}">{{ customer.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <input type="date" name="start_date" class="form-control">
+    </div>
+    <div class="col-md-3">
+      <input type="date" name="end_date" class="form-control">
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">Filter</button>
+    </div>
+  </form>
+
+  <!-- KPI Tiles -->
+  <div class="row text-center mb-4">
+    <div class="col">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5>Total Invoiced</h5>
+          <p class="fs-4 text-primary">₹{{ total_invoiced }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5>Total Received</h5>
+          <p class="fs-4 text-success">₹{{ total_received }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5>Total Outstanding</h5>
+          <p class="fs-4 text-danger">₹{{ total_outstanding }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5>% Overdue</h5>
+          <p class="fs-4 text-warning">{{ percent_overdue }}%</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Invoice Table -->
+  <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>Invoice ID</th>
+        <th>Customer</th>
+        <th>Invoice Date</th>
+        <th>Due Date</th>
+        <th>Amount</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for invoice in invoices %}
+        <tr class="{% if invoice.is_overdue %}table-danger{% endif %}">
+          <td>{{ invoice.invoice_id }}</td>
+          <td>{{ invoice.customer_name }}</td>
+          <td>{{ invoice.invoice_date }}</td>
+          <td>{{ invoice.due_date }}</td>
+          <td>₹{{ invoice.amount }}</td>
+          <td>
+            <form method="post" action="{{ url_for('record_payment') }}" class="d-flex">
+              <input type="hidden" name="invoice_id" value="{{ invoice.invoice_id }}">
+              <input type="number" step="0.01" name="amount" class="form-control form-control-sm me-2" placeholder="Amount" required>
+              <input type="date" name="payment_date" class="form-control form-control-sm me-2" required>
+              <button type="submit" class="btn btn-sm btn-success">Pay</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Chart -->
+  <div class="card mt-4 shadow-sm">
+    <div class="card-body">
+      <canvas id="chart" 
+              data-labels='{{ chart_labels|tojson }}' 
+              data-values='{{ chart_values|tojson }}'>
+      </canvas>
+    </div>
+  </div>
+</div>
+
+<!-- External Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
